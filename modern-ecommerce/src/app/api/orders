@@ -1,0 +1,25 @@
+Sure, here's the contents for the file: /modern-ecommerce/modern-ecommerce/src/app/api/orders:
+
+import { NextApiRequest, NextApiResponse } from 'next';
+import { prisma } from '@/lib/prisma';
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    if (req.method === 'GET') {
+        const orders = await prisma.order.findMany();
+        return res.status(200).json(orders);
+    }
+
+    if (req.method === 'POST') {
+        const { userId, items, totalAmount } = req.body;
+        const newOrder = await prisma.order.create({
+            data: {
+                userId,
+                items,
+                totalAmount,
+            },
+        });
+        return res.status(201).json(newOrder);
+    }
+
+    return res.status(405).json({ message: 'Method not allowed' });
+}
